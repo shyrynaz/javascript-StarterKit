@@ -4,11 +4,20 @@
   "description": "JavaScript development environment",
   "scripts": {
     "prestart": "babel-node biuldScripts/startMessage.js",
-    "start": "babel-node biuldScripts/srcServer.js",
+    "start": "npm-run-all --parallel open:src test:watch start-mockapi",
+    "open:src": "babel-node biuldScripts/srcServer.js",
     "share": "lt --port 3000",
     "lint": "esw webpack.config.* src biuldScripts",
     "test": "mocha --reporter progress biuldScripts/testSetup.js \"src/**/*.test.js\"",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "npm run test -- --watch",
+    "generate-mock-data": "babel-node biuldScripts/generateMockData",
+    "prestart-mockapi": "npm run generate-mock-data",
+    "start-mockapi": "json-server --watch src/api/db.json --port 3001",
+    "clean-dist": "rimraf ./dist && mkdir dist",
+    "prebuild": "npm-run-all clean-dist test lint",
+    "build": "babel-node biuldScripts/build.js",
+    "postbuild": "babel-node biuldScripts/distServer.js",
+    "deploy": "surge ./dist"
   },
   "author": "Stephen Muchiri",
   "license": "MIT",
